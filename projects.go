@@ -97,6 +97,8 @@ func createProject(ctx context.Context, client *cloudresourcemanager.Service, id
 	op, err := client.Projects.Create(&cloudresourcemanager.Project{
 		ProjectId: id,
 		Name:      id, // use same Display Name as Project ID
+		Labels: map[string]string{
+			"created-via": "runstatic"},
 	}).Context(ctx).Do()
 	if err != nil {
 		return nil, fmt.Errorf("failed to create project: %w", err)
@@ -140,8 +142,7 @@ func promptExistingProject(list []project) (*project, error) {
 		Message: "Choose a project to deploy into:",
 		Options: options,
 	}, &choice,
-		survey.WithValidator(survey.Required),
-	); err != nil {
+		survey.WithValidator(survey.Required)); err != nil {
 		return nil, fmt.Errorf("could not choose a project: %+v", err)
 	}
 	v := optMap[choice]

@@ -18,7 +18,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("authentication error: %v", err)
 	}
-	_ = ts
 	oauthSvc, err := googleoauth2.NewService(ctx, option.WithTokenSource(ts))
 	if err != nil {
 		log.Fatal(err)
@@ -37,6 +36,12 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println("Default " + gcp + " project is set to " + color.New(color.FgGreen, color.Bold).Sprint(projectID) + ".")
+
+	// ensure billing (requires enabling cloud run API)
+	if err := ensureBilling(ctx, ts, projectID); err != nil {
+		log.Fatal(err)
+	}
+
 }
 
 func ensureDefaultProject(ctx context.Context, ts oauth2.TokenSource) (string, error) {

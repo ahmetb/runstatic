@@ -1,7 +1,7 @@
 package main
 
 var (
-	defaultProjectFile = mustDotDir().File("project")
+	defaultProjectFile = mustDotDir().File("project_id")
 )
 
 func readConfig(file dotFile) (string, bool, error) {
