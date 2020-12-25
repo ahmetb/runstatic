@@ -4,14 +4,15 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"os"
+	"os/exec"
+	"runtime"
+
 	"github.com/fatih/color"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/cloudresourcemanager/v1"
 	googleoauth2 "google.golang.org/api/oauth2/v2"
-	"os"
-	"os/exec"
-	"runtime"
 )
 
 var (
@@ -29,17 +30,20 @@ var (
 
 	// from Google Developer Console (https://console.developers.google.com).
 	googleOAuth2 = &oauth2.Config{
-		ClientID:     "233694408259-7n6aarqdm3e0aafrtrbu8r9duv46mtsl.apps.googleusercontent.com",
-		ClientSecret: "kpLBlEZT3sxg2-71iptx5WE1",
+		// ClientID:     "233694408259-m4tvj6abiqr5dqtdh97sjvqs4mdp3o40.apps.googleusercontent.com",
+		// ClientSecret: "V2mIxRWOcb6CnDsMXoUhXHKw",
+
+		ClientID:     "32555940559.apps.googleusercontent.com",
+		ClientSecret: "ZmssLNjJy2998hD4CTg2ejr2",
 		RedirectURL:  "urn:ietf:wg:oauth:2.0:oob",
 		Scopes:       scopes,
 		Endpoint:     google.Endpoint,
 	}
 
 	scopes = []string{
-		googleoauth2.UserinfoEmailScope, // required to read email
+		googleoauth2.UserinfoEmailScope,         // required to read email
 		cloudresourcemanager.CloudPlatformScope, // required for everything GCP
-		"https://www.googleapis.com/auth/cloudplatformprojects", // required to create projects, probably superfluous after cloud-platform scope.
+		// "https://www.googleapis.com/auth/cloudplatformprojects", // required to create projects, probably superfluous after cloud-platform scope.
 	}
 )
 

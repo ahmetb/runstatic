@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/fatih/color"
 	"golang.org/x/oauth2"
@@ -27,12 +28,7 @@ func projectsClient(ctx context.Context, ts oauth2.TokenSource) (*cloudresourcem
 
 func listProjects(ctx context.Context, client *cloudresourcemanager.Service) ([]project, error) {
 	var out []project
-	var pageToken string
-	for {
-		resp, err := client.Projects.List().Context(ctx).PageSize(1000).PageToken(pageToken).Do()
-		if err != nil {
-			return nil, fmt.Errorf("failed to list GCP projects: %w", err)
-		}
+	if err := client.Projects.List().PageSize(500).Filter("lifecycleState:ACTIVE").Pages(ctx, func(resp *cloudresourcemanager.ListProjectsResponse) error {
 		for _, p := range resp.Projects {
 			out = append(out, project{
 				number:      p.ProjectNumber,
@@ -40,10 +36,9 @@ func listProjects(ctx context.Context, client *cloudresourcemanager.Service) ([]
 				displayName: p.Name,
 			})
 		}
-		pageToken = resp.NextPageToken
-		if pageToken == "" {
-			break
-		}
+		return nil
+	}); err != nil {
+		return nil, fmt.Errorf("failed to list GCP projects: %w", err)
 	}
 	return out, nil
 }
@@ -58,7 +53,7 @@ func chooseProject(ctx context.Context, ts oauth2.TokenSource) (*project, error)
 	if err != nil {
 		return nil, err
 	}
-	list = nil
+	list = nil // TODO(remove)
 
 	if len(list) == 0 {
 		fmt.Println(color.RedString("You don't have any ") + gcp + color.RedString(" projects.") + " Let's create one!")
